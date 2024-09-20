@@ -25,20 +25,20 @@ SECRET_KEY = 'django-insecure-0h#cpf#w^4d0vv1rp_(d%)%oa@niq$hjy2*09z*lob5w3_(m)u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ ]
+ALLOWED_HOSTS = ['192.168.0.104']
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
-    "site_title": "FEUNCA",
+    "site_title": "FESO",
 
     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_header": "FEUNCA",
+    "site_header": "FESO",
 
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_brand": "FEUNCA",
+    "site_brand": "FESO",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "image/favcp2.jpg",
+    "site_logo": "image/feso242.jpg",
 
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
     "login_logo": None,
@@ -53,10 +53,10 @@ JAZZMIN_SETTINGS = {
     "site_icon": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Bienvenido al Administrador de la FEUNCA",
+    "welcome_sign": "Bienvenido al Administrador de la FESO",
 
     # Copyright on the footer
-    "copyright": "Federación de Estudiantes de la UNCA",
+    "copyright": "Federación de Estudiantes Secundarios Ovetenses",
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string

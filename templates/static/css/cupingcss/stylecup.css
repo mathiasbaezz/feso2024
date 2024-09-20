@@ -35,7 +35,7 @@ th, td {
     z-index: 2;
 }
 th{
-    background-color: #009813;
+    background-color: #ff031c;
     color: whitesmoke;
 }
 td{
@@ -151,7 +151,7 @@ th, td {
 }
 
 th{
-    background-color: #009813;
+    background-color: #ff031c;
     color: whitesmoke;
 }
 tr:hover {
@@ -437,7 +437,7 @@ body {
 	left: 50%;
 	transform: translateX(-50%);
 	border: 0;
-	background-color: #009813;
+	background-color: #ff031c;
 	border-radius: 6px;
 	padding: 10px 48px;
 	color: rgba(255, 255, 255, 0.9);
@@ -463,7 +463,7 @@ body {
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
-    border-right: 0.15em solid #009813;
+    border-right: 0.15em solid #ff031c;
     box-sizing: border-box;
 }
 
@@ -480,6 +480,38 @@ body {
 
 @keyframes blink-caret {
     from, to { border-color: transparent; }
-    50% { border-color: #009813; }
+    50% { border-color: #ff031c; }
 }
+
+
+
+/* Transición suave para el texto */
+.welcome-text {
+    transition: opacity 1s ease-in-out;
+}
+
+
+/* Transición para la imagen */
+#welcome-image {
+    transition: opacity 0.1s ease-in-out; /* Cambiado a 0.1 segundos */
+    opacity: 0; /* Inicialmente oculto */
+}
+
+
+
+
+
+/* Estilo opcional para mejorar el diseño */
+.section-title {
+    margin: 20px 0;
+}
+
+#edition-text {
+    font-size: 28px; /* Ajusta el tamaño del texto si es necesario */
+    font-weight: bold; /* Opcional: hace que el texto sea más prominente */
+}
+
+
+
+
 

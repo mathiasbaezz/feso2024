@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -13,40 +14,54 @@ class EquipoUnca(models.Model):
     def __str__(self):
         return self.nombre
 
+
+
 class PartidoUnca(models.Model):
     DEPORTE_CHOICES = (
         ('FUTBOL_FEMENINO', 'Fútbol de Campo Femenino'),
         ('FUTBOL_MASCULINO', 'Fútbol de Campo Masculino'),
-        ('FUTSAL_FEMENINO', 'Fútsal Femenino'),
-        ('FUTSAL_MASCULINO', 'Fútsal Masculino'),
+        ('FUTSAL_FEMENINO', 'Fútsal FIFA Femenino'),
+        ('FUTSAL_MASCULINO', 'Fútsal FIFA Masculino'),
         ('HANDBALL_FEMENINO', 'Handball Femenino'),
         ('HANDBALL_MASCULINO', 'Handball Masculino'),
         ('VOLLEY_FEMENINO', 'Volley Femenino'),
         ('VOLLEY_MASCULINO', 'Volley Masculino'),
-        ('BASKET_FEMENINO', 'Básquet Femenino'),
-        ('BASKET_MASCULINO', 'Básquet Masculino'),
-        ('FUTBOL_UNIVERSITARIO', 'Fútbol Universitario'),
-        ('PIKI', 'Piki'),
-        ('AJEDREZ', 'Ajedrez'),
-        ('PING_PONG', 'Ping Pong'),
+        ('BASKET_FEMENINO', 'Basketball Femenino'),
+        ('BASKET_MASCULINO', 'Basketball Masculino'),
+        ('PADEL_FEMENINO', 'Padel Femenino'),
+        ('PADEL_MASCULINO', 'Padel Masculino'),
+        ('PIKI_FEMENINO', 'Piki Volley Femenino'),
+        ('PIKI_MASCULINO', 'Piki Volley Masculino'),
+        ('ATLETISMO', 'Atletismo'),
     )
 
+    FASE_CHOICES = [
+        ('Fase de Grupos', 'Fase de Grupos'),
+        ('Octavos de Final', 'Octavos de Final'),
+        ('Cuartos de Final', 'Cuartos de Final'),
+        ('Semifinal', 'Semifinal'),
+        ('Final', 'Final'),
+    ]
 
-    equipo_local = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='partidos_local')
-    equipo_visitante = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='partidos_visitante')
+    equipo_local = models.ForeignKey('EquipoUnca', on_delete=models.CASCADE, related_name='partidos_local')
+    equipo_visitante = models.ForeignKey('EquipoUnca', on_delete=models.CASCADE, related_name='partidos_visitante')
     goles_local = models.PositiveIntegerField(blank=True, null=True)
     goles_visitante = models.PositiveIntegerField(blank=True, null=True)
+    penales_local = models.PositiveIntegerField(blank=True, null=True)
+    penales_visitante = models.PositiveIntegerField(blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)
-    partido_numero = models.CharField(max_length=100, blank=True, null=True)
-    fase_partido = models.CharField(max_length=99, blank=True, null=True)
+    partido_numero = models.CharField(max_length=99, blank=True, null=True)
+    fase_partido = models.CharField(max_length=99, choices=FASE_CHOICES, blank=True, null=True)
     deporte = models.CharField(max_length=50, choices=DEPORTE_CHOICES, blank=True, null=True)
-
+    informe_final = models.CharField(max_length=99, blank=True, null=True)
 
     def __str__(self):
         return f"PartidoUnca {self.id} {self.equipo_local} vs {self.equipo_visitante}"
 
     def get_absolute_url(self):
         return reverse('resumen_unca', kwargs={'pk': self.pk})
+
+
 
 
 class EventoPartidoUnca(models.Model):
@@ -84,31 +99,115 @@ class EventosUnca(models.Model):
     def __str__(self):
         return f"{self.tipo} en el minuto {self.minuto} del partido {self.partido}"
 
-from django.db import models
 
-class PosicionUnca(models.Model):
+class TablaPosiciones(models.Model):
+    deporte = models.CharField(max_length=50, choices=PartidoUnca.DEPORTE_CHOICES)
     equipo = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE)
-    puntos_futbol_fem = models.IntegerField(default=0)
-    puntos_futbol_masc = models.IntegerField(default=0)
-    puntos_futsal_fem = models.IntegerField(default=0)
-    puntos_futsal_masc = models.IntegerField(default=0)
-    puntos_handball_fem = models.IntegerField(default=0)
-    puntos_handball_masc = models.IntegerField(default=0)
-    puntos_volley_fem = models.IntegerField(default=0)
-    puntos_volley_masc = models.IntegerField(default=0)
-    puntos_basket_fem = models.IntegerField(default=0)
-    puntos_basket_masc = models.IntegerField(default=0)
-    puntos_futbol_universitario = models.IntegerField(default=0)
-    puntos_piki = models.IntegerField(default=0)
-    puntos_ajedrez = models.IntegerField(default=0)
-    puntos_pingpong = models.IntegerField(default=0)
-    puntos_ciclismofem = models.IntegerField(default=0)
-    puntos_ciclismomasc = models.IntegerField(default=0)
-    puntos_atletismo = models.IntegerField(default=0)
-    puntos = models.IntegerField(default=0)
+    puesto = models.PositiveIntegerField()  # 1, 2, 3 o 4
+    puntos = models.PositiveIntegerField()  # 20, 15, 10, 5 según puesto
 
     def __str__(self):
-        return f"{self.equipo}"
+        return f"{self.equipo.nombre} - {self.deporte} - Puesto {self.puesto} con {self.puntos} puntos"
+
+    class Meta:
+        unique_together = ('deporte', 'equipo', 'puesto')
+
+
+
+class TercerPuestoLogica:
+    @staticmethod
+    def determinar_tercer_puesto(semifinales):
+        # semifinales: lista de partidos de la fase semifinal
+        perdedores = []
+        for partido in semifinales:
+            if partido.goles_local < partido.goles_visitante:
+                perdedores.append((partido.equipo_local, partido.goles_visitante - partido.goles_local))
+            else:
+                perdedores.append((partido.equipo_visitante, partido.goles_local - partido.goles_visitante))
+
+        # Ordenamos los perdedores por la diferencia de goles (menor diferencia de goles es mejor)
+        perdedores.sort(key=lambda x: x[1])
+
+        # Si empatan en diferencia de goles, entonces revisamos fases anteriores
+        if perdedores[0][1] == perdedores[1][1]:
+            equipo1 = perdedores[0][0]
+            equipo2 = perdedores[1][0]
+
+            # Verificar resultados en fases previas
+            equipo1_victorias, equipo1_dif_goles, equipo1_tarjetas = TercerPuestoLogica.obtener_estadisticas_previas(equipo1)
+            equipo2_victorias, equipo2_dif_goles, equipo2_tarjetas = TercerPuestoLogica.obtener_estadisticas_previas(equipo2)
+
+            # Comparar partidos ganados
+            if equipo1_victorias > equipo2_victorias:
+                tercer_puesto = equipo1
+                cuarto_puesto = equipo2
+            elif equipo2_victorias > equipo1_victorias:
+                tercer_puesto = equipo2
+                cuarto_puesto = equipo1
+            else:
+                # Si están empatados en victorias, comparamos diferencia de goles acumulada
+                if equipo1_dif_goles > equipo2_dif_goles:
+                    tercer_puesto = equipo1
+                    cuarto_puesto = equipo2
+                elif equipo2_dif_goles > equipo1_dif_goles:
+                    tercer_puesto = equipo2
+                    cuarto_puesto = equipo1
+                else:
+                    # Si siguen empatados, comparamos tarjetas
+                    if equipo1_tarjetas < equipo2_tarjetas:
+                        tercer_puesto = equipo1
+                        cuarto_puesto = equipo2
+                    else:
+                        tercer_puesto = equipo2
+                        cuarto_puesto = equipo1
+
+        else:
+            tercer_puesto = perdedores[0][0]
+            cuarto_puesto = perdedores[1][0]
+
+        return tercer_puesto, cuarto_puesto
+
+    @staticmethod
+    def obtener_estadisticas_previas(equipo):
+        """
+        Esta función obtiene estadísticas de las fases previas para el equipo dado.
+        Devuelve:
+        - Cantidad de victorias en fases previas.
+        - Diferencia de goles acumulada en fases previas.
+        - Cantidad de tarjetas amarillas y rojas (ponderadas).
+        """
+        partidos_previos = PartidoUnca.objects.filter(
+            Q(equipo_local=equipo) | Q(equipo_visitante=equipo),
+            fase_partido__in=['Fase de Grupos', 'Octavos de Final', 'Cuartos de Final']
+        )
+
+        victorias = 0
+        dif_goles_acumulada = 0
+        tarjetas = 0  # Tarjetas amarillas = 1 punto, tarjetas rojas = 3 puntos
+
+        for partido in partidos_previos:
+            if partido.equipo_local == equipo:
+                if partido.goles_local > partido.goles_visitante:
+                    victorias += 1
+                dif_goles_acumulada += partido.goles_local - partido.goles_visitante
+            else:
+                if partido.goles_visitante > partido.goles_local:
+                    victorias += 1
+                dif_goles_acumulada += partido.goles_visitante - partido.goles_local
+
+            # Sumar tarjetas (deberás tener en cuenta cómo están almacenadas las tarjetas en tu modelo de eventos)
+            eventos = EventosUnca.objects.filter(partido=partido, jugadores__icontains=equipo.nombre)
+            for evento in eventos:
+                if 'TARJETA AMARILLA' in evento.tipo:
+                    tarjetas += 1
+                elif 'TARJETA ROJA' in evento.tipo:
+                    tarjetas += 3
+
+        return victorias, dif_goles_acumulada, tarjetas
+
+
+
+
 
 
 class CampeonUnca(models.Model):
@@ -237,3 +336,56 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class AtletismoFeso(models.Model):
+    DEPORTE_ATLETISMO_CHOICES = (
+        ('100M_FEMENINO', '100m Femenino'),
+        ('100M_MASCULINO', '100m Masculino'),
+        ('200M_FEMENINO', '200m Femenino'),
+        ('200M_MASCULINO', '200m Masculino'),
+        ('400M_FEMENINO', '400m Femenino'),
+        ('400M_MASCULINO', '400m Masculino'),
+        ('800M_FEMENINO', '800m Femenino'),
+        ('1500M_MASCULINO', '1500m Masculino'),
+        ('4X100M_FEMENINO', '4x100m Femenino'),
+        ('4X100M_MASCULINO', '4x100m Masculino'),
+        ('DISCO_FEMENINO', 'Disco Femenino'),
+        ('DISCO_MASCULINO', 'Disco Masculino'),
+        ('BALA_FEMENINO', 'Bala Femenino'),
+        ('BALA_MASCULINO', 'Bala Masculino'),
+        ('JABALINA_FEMENINO', 'Jabalina Femenino'),
+        ('JABALINA_MASCULINO', 'Jabalina Masculino'),
+        ('SALTO_ALTO_FEMENINO', 'Salto Alto Femenino'),
+        ('SALTO_ALTO_MASCULINO', 'Salto Alto Masculino'),
+        ('SALTO_LARGO_FEMENINO', 'Salto Largo Femenino'),
+        ('SALTO_LARGO_MASCULINO', 'Salto Largo Masculino'),
+        ('SALTO_TRIPLE_FEMENINO', 'Salto Triple Femenino'),
+        ('SALTO_TRIPLE_MASCULINO', 'Salto Triple Masculino'),
+        ('CICLISMO_FEMENINO', 'Ciclismo Femenino'),
+        ('CICLISMO_MASCULINO', 'Ciclismo Masculino'),
+        ('NATACION_CROL_FEMENINO', 'Natacion Crol Femenino'),
+        ('NATACION_CROL_MASCULINO', 'Natacion Crol Masculino'),
+        ('NATACION_ESPALDA_FEMENINO', 'Natacion Espalda Femenino'),
+        ('NATACION_ESPALDA_MASCULINO', 'Natacion Espalda Masculino'),
+    )
+
+
+    primer_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='primer_puesto')
+    primer_puesto_atleta= models.CharField( max_length=50,  blank=True, null=True)
+    segundo_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='segundo_puesto')
+    segundo_puesto_atleta = models.CharField(max_length=50, blank=True, null=True)
+    tercer_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='tercer_puesto')
+    tercer_puesto_atleta = models.CharField(max_length=50, blank=True, null=True)
+    cuarto_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='cuarto_puesto')
+    cuarto_puesto_atleta = models.CharField(max_length=50, blank=True, null=True)
+    quinto_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='quinto_puesto')
+    quinto_puesto_atleta = models.CharField(max_length=50, blank=True, null=True)
+    sexto_puesto = models.ForeignKey(EquipoUnca, on_delete=models.CASCADE, related_name='sexto_puesto')
+    sexto_puesto_atleta = models.CharField(max_length=50, blank=True, null=True)
+    fecha = models.DateTimeField(blank=True, null=True)
+    deporte = models.CharField(max_length=50, choices=DEPORTE_ATLETISMO_CHOICES, blank=True, null=True)
+
+
+    def __str__(self):
+        return f"AtletismoFeso {self.id}"

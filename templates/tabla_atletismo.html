@@ -1,8 +1,9 @@
-{% include "headercpunca.html" %}
+{% include "headerfeso.html" %}
 {% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Tabla de Posiciones</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/cupingcss/stylecup.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
@@ -26,7 +27,7 @@
             display: none !important;
         }
         .select2-container--default .select2-results__option--highlighted {
-            background-color: #009813 !important;
+            background-color: #ff031c !important;
             color: white !important;
         }
     </style>
@@ -50,7 +51,7 @@
     <section class="full-courses-section spad pt-0">
     <div class="container">
     <h4 class="h3-stylecup">Tabla de Posiciones Atletismo</h4>
-        <img style="display: block; margin: 0 auto; max-width: 250px; height: auto;"   src="{% static 'image/cpunca6.png' %}"><br><br>
+        <img style="display: block; margin: 0 auto; max-width: 250px; height: auto;"   src="{% static 'image/fesoje24.png' %}"><br><br>
         
         <div style="text-align: center;">
             <form id="deporteForm" method="get">
@@ -58,7 +59,7 @@
                 <select  id="deporte" name="deporte" style="border-radius: 20px; padding: 15px; ">
                     <option value="TABLA" data-icon="fa-solid  fa-chart-bar" data-url="#">Tabla de Posiciones Atletismo</option>
                     <option value="ATLETISMO" data-icon="fa-solid fa-running" data-url="/100m">Atletismo</option>
-                    <option value="RESULTADOS" data-icon="fa-solid fa-sign-in-alt" data-url="/partidos_copa_unca">Todos los Deportes</option>
+                    <option value="RESULTADOS" data-icon="fa-solid fa-sign-in-alt" data-url="/resultados_feso">Todos los Deportes</option>
                     <!-- Agrega las opciones para los demás deportes -->
                 </select>
                 <!--<button type="submit" style="border-radius: 8px; margin-top: 20px; background-color: #808080; color: white; padding: 8px; box-shadow: none; border: none;">Mostrar resultados</button>-->
@@ -67,224 +68,45 @@
         </div><br><br>
         
 
-<table id="tabla-posiciones" >
-    <thead>
-        <tr>
-            <th class="columnaabsolute">&nbsp;&nbsp;&nbsp;EQUIPO</th>
-            <th>100M<br> FEM</th>
-            <th>100M<br> MASC</th>
-            <th>200M<br> FEM</th>
-            <th>200M<br> MASC</th>
-            <th>4<br>X<br>100M<br> FEM</th>
-            <th>4<br>X<br>100M<br> MASC</th>
-            <th>DIS<br>CO<br> FEM</th>
-            <th>DIS<br>CO<br> MASC</th>
-            <th>BA<br>LA<br> FEM</th>
-            <th>BA<br>LA<br> MASC</th>
-            <th>JA<br>BA<br>LI<br>NA FEM</th>
-            <th>JA<br>BA<br>LI<br>NA MASC</th>
-            <th>SAL<br>TO LAR<br>GO FEM</th>
-            <th>SAL<br>TO LAR<br>GO MASC</th>
-            <th>SAL<br>TO TRI<br>PLE MASC</th>
-            <th>SAL<br>TO TRI<br>PLE MASC</th>
-            <th>PUNTOS</th>
-        </tr>
-    </thead>
-    <tbody>
-        
+       <table id="tabla-posiciones">
+        <thead>
+            <tr>
+                <th class="columnaabsolute">Equipo</th>
+                <th >Posición</th>
+                <th>Puntuación Total</th>
+                <th>Detalles por Modalidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for posicion in posiciones_ordenadas %}
             <tr>
                 <td class="columnaabsolute">
-                    <img src="{% static "image/fce.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCE
+                    <img src="{% static "image/" %}{{ posicion.equipo.imagen }}" alt="" class="equipo-img" style="display: inline">
+                    {{ posicion.equipo.nombre }}</td>
+                <td >{{ forloop.counter }}</td>
+                <td>{{ posicion.puntos }}</td>
+                <td>
+                    <ul  class="deporte-detalles">
+                        {% for detalle in posicion.detalles %}
+                        <ul>{{ detalle.emoji }} {{ detalle.deporte }}:  {{ detalle.puntos }} puntos  </ul>
+                        {% endfor %}
+                    </ul>
                 </td>
-                <td>10</td>
-                <td>7</td>
-                <td>10</td>
-                <td>15</td>
-                <td>7</td>
-                <td>7</td>
-                <td>5</td>
-                <td>10</td>
-                <td>0</td>
-                <td>17</td>
-                <td>10</td>
-                <td>10</td>
-                <td>0</td>
-                <td>12</td>
-                <td>7</td>
-                <td>7</td>
-                <td>134</td>
             </tr>
+            {% empty %}
             <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/FCSPYH.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCSPyH
-                </td>
-                <td>5</td>
-                <td>15</td>
-                <td>7</td>
-                <td>7</td>
-                <td>10</td>
-                <td>10</td>
-                <td>7</td>
-                <td>0</td>
-                <td>7</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>10</td>
-                <td>10</td>
-                <td>10</td>
-                <td>10</td>
-                <td>108</td>
+                <td colspan="4">No hay resultados disponibles</td>
             </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/fcytuncacp.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCYT
-                </td>
-                <td>7</td>
-                <td>0</td>
-                <td>5</td>
-                <td>0</td>
-                <td>5</td>
-                <td>5</td>
-                <td>10</td>
-                <td>7</td>
-                <td>5</td>
-                <td>5</td>
-                <td>5</td>
-                <td>7</td>
-                <td>7</td>
-                <td>0</td>
-                <td>5</td>
-                <td>0</td>
-                <td>73</td>
-            </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/FCP.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCP
-                </td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>10</td>
-                <td>0</td>
-                <td>7</td>
-                <td>5</td>
-                <td>5</td>
-                <td>0</td>
-                <td>0</td>
-                <td>5</td>
-                <td>32</td>
-            </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/fcs.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCS
-                </td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>5</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>5</td>
-            </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/FCM.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FCM
-                </td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/FCO.png" %}" alt="" class="equipo-img" style="display: inline">
-                    FO
-                </td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td class="columnaabsolute">
-                    <img src="{% static "image/esadt.png" %}" alt="" class="equipo-img" style="display: inline">
-                    ESADT
-                </td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-      
-    </tbody>
+            {% endfor %}
+        </tbody>
+
 </table><br><br>
 
     <h4 >Puntaje Atletismo</h4>
-        <img style=" max-width: 250px; "   src="{% static 'image/cpunca6.png' %}"><br><br>
+        <img style=" max-width: 250px; "   src="{% static 'image/fesoje24.png' %}"><br><br>
     <ul style="list-style-type: none;">
         <li > <i class="fa fa-venus-mars"></i> Mixto<br> 
-            &#129351; 1er Puesto: 10pts<br>  &#129352; 2do Puesto: 7pts<br> &#129353; 3er Puesto: 5pts</li><br>
+            &#129351; 1er Puesto: 10pts<br>  &#129352; 2do Puesto: 6pts<br> &#129353; 3er Puesto: 4pts<br> 4️⃣ 4to Puesto: 3pts<br> 5️⃣ 5to Puesto: 2pts<br> 6️⃣ 6to Puesto: 1pts</li><br>
 
     <li style="visibility: hidden;">&nbsp;</li>
 </ul>
@@ -304,7 +126,7 @@
 	<section class="blog-section spad">
 		<div class="container">
 			<div class="section-title text-center">
-                <h4><i class="fa fa-newspaper-o"></i> FEUNCA Noticias</h4>
+                <h4><i class="fa fa-newspaper-o"></i> FESO Noticias</h4>
 				
 			</div>
 			<div class="row">

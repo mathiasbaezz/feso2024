@@ -123,7 +123,7 @@ ol {
 	position: relative;
 	display: inline-block;
 	text-transform: uppercase;
-	background: #009813;
+	background: #ff031c;
 	color: #fff;
 	padding: 18px 30px;
 	font-size: 14px;
@@ -303,7 +303,7 @@ ol {
 }
 
 .nav-section .nav-right a {
-	color: #009813;
+	color: #ff031c;
 	margin-left: 30px;
 	font-size: 16px;
 }
@@ -397,8 +397,8 @@ ol {
 .navbar .active,
 .navbar .active:focus,
 .navbar li:hover>a {
-  color: #009813;
-  border-color: #009813;
+  color: #ff031c;
+  border-color: #ff031c;
 }
 /* Estilos para pantallas pequeñas */
 @media screen and (max-width: 800px) {
@@ -437,7 +437,7 @@ ol {
 .hamburger div{
     width: 30px;
     height:3px;
-    background: #009813;
+    background: #ff031c;
     margin: 5px;
     transition: all 0.3s ease;
 	z-index: 999;
@@ -1431,7 +1431,7 @@ ol {
 
 .site-breadcrumb {
 	padding: 60px 0;
-	color: #009813;
+	color: #ff031c;
 	font-size: 18px;
 }
 
@@ -1461,7 +1461,7 @@ ol {
 	min-width: 40px;
 	height: 40px;
 	border: 1px solid #e1e1e1;
-	color: #009813;
+	color: #ff031c;
 	padding-top: 9px;
 	font-size: 14px;
 	margin-right: 14px;
@@ -1470,8 +1470,8 @@ ol {
 
 .site-pageination li a:hover,
 .site-pageination li a.active {
-	background: #009813;
-	border-color: #009813;
+	background: #ff031c;
+	border-color: #ff031c;
 	color: #fff;
 }
 

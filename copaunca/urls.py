@@ -21,26 +21,19 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admncpunca24/', admin.site.urls),
+    path('admnfeso24/', admin.site.urls),
     path('', views.raiz),
-    path('tabla_posiciones_copa_unca/', views.tabla_posiciones_unca, name='tabla_posiciones'),
-    path('resultados_copa_unca/', views.mostrar_partidos_unca, name='partidos'),
-    path('resultados_copa_unca/<int:pk>/', views.resumen_unca, name='resumen'),
-    path('copa_unca/', views.deportes_unca),
-    path('campeones_copa_unca/', views.tabla_campeones_unca),
-    path('100m/', views.cienmetros),
-    path('200m/', views.doscientosmetros),
-    path('4x100/', views.cuatrocientosmetros),
-    path('disco/', views.disco),
-    path('bala/', views.bala),
-    path('jabalina/', views.jabalina),
-    path('saltolargo/', views.saltolargo),
-    path('saltotriple/', views.saltotriple),
-    path('ciclismo/', views.ciclismo),
-    path('tabla_atletismo/', views.tabla_atletismo),
+    path('tabla_posiciones_feso/', views.actualizar_tabla_posiciones, name='tabla_posiciones'),
+    path('resultados_feso/', views.mostrar_partidos_unca, name='partidos'),
+    path('resultados_feso/<int:pk>/', views.resumen_unca, name='resumen'),
+    path('feso/', views.deportes_unca),
+    path('campeones_feso/', views.tabla_campeones_unca),
+    path('100m/', views.mostrar_atlestismo_feso),
+    path('tabla_atletismo/', views.tabla_posiciones_atletismo, name='tabla_posiciones'),
     path ('noticias', views.blog),
     path ('noticias/<slug:pk>', views.single_blog, name='single_blog'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
